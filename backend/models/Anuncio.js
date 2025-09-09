@@ -1,10 +1,12 @@
+// Página: backend/models/Anuncio.js
 const mongoose = require("mongoose");
 
 const AnuncioSchema = new mongoose.Schema({
-  titulo: String,
-  descricao: String,
+  titulo: { type: String, required: true },
+  descricao: { type: String },
+  preco: { type: Number, required: true },
   usuario: { type: mongoose.Schema.Types.ObjectId, ref: "Usuario" },
-  criadoEm: { type: Date, default: Date.now },
+  imagens: [{ type: String }], // Array de nomes de arquivos
 });
 
 module.exports = mongoose.model("Anuncio", AnuncioSchema);

@@ -1,0 +1,39 @@
+/* Página: src/pages/DetalheAnuncio.css */
+.detalhe-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 16px;
+  font-family: Arial, sans-serif;
+}
+
+.voltar {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+
+.voltar:hover {
+  text-decoration: underline;
+}
+
+.galeria {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.galeria .media {
+  flex: 1 1 200px;
+}
+
+.galeria img,
+.galeria video {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 8px;
+}

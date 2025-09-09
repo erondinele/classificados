@@ -1,0 +1,93 @@
+/* Página: src/components/Header.css */
+
+/* Container principal do header */
+.header {
+  width: 100%;
+  background-color: #007bff; /* Azul escuro */
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 20px;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1000;
+}
+
+/* Título */
+.header .titulo {
+  font-size: 1.8em;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* Menu principal */
+.header nav {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.header nav a {
+  color: #fff; /* Texto branco */
+  text-decoration: none;
+  padding: 10px 15px; /* Botão maior para facilitar clique */
+  border-radius: 5px;
+  background-color: #0056b3; /* Fundo azul mais escuro para contraste */
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.header nav a:hover {
+  background-color: #003f7f; /* Hover ainda mais escuro */
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Menu hamburguer mobile */
+.hamburguer {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  gap: 4px;
+}
+
+.hamburguer div {
+  width: 25px;
+  height: 3px;
+  background-color: #fff;
+  transition: all 0.3s ease;
+}
+
+.hamburguer.open div:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburguer.open div:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburguer.open div:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .header nav {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .hamburguer {
+    display: flex;
+  }
+
+  .header nav a {
+    width: 90%;
+    text-align: center;
+  }
+}

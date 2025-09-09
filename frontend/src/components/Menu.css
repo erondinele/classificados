@@ -1,0 +1,97 @@
+/* Página: src/components/Menu.css */
+
+.menu-container {
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+}
+
+.menu-titulo {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #007bff;
+}
+
+/* Menu desktop */
+.menu-items {
+  display: flex;
+  gap: 15px;
+}
+
+.menu-items a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 15px;
+  border-radius: 25px;
+  transition: all 0.3s;
+  background-color: #f1f3f6;
+}
+
+.menu-items a:hover {
+  background-color: #007bff;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* Hamburger */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  gap: 5px;
+}
+
+.hamburger div {
+  width: 25px;
+  height: 3px;
+  background-color: #333;
+  transition: all 0.3s;
+}
+
+.hamburger.active div:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+.hamburger.active div:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.active div:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .menu-items {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background-color: #fff;
+    padding: 20px 0;
+    gap: 10px;
+    border-top: 1px solid #eee;
+  }
+
+  .menu-items.active {
+    display: flex;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .menu-items a {
+    justify-content: flex-start;
+    padding: 12px 20px;
+    font-size: 1.1em;
+  }
+}

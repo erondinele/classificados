@@ -1,0 +1,122 @@
+/* Página: src/pages/Home.css */
+
+/* Garantir que o body e html não causem scroll horizontal */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  font-family: Arial, sans-serif;
+}
+
+/* Vitrine de anúncios */
+.vitrine {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Card de anúncio */
+.card-anuncio {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-anuncio:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card-anuncio img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+.card-conteudo {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.card-conteudo h3 {
+  margin: 0;
+  font-size: 1.1em;
+  color: #007bff;
+}
+
+.card-conteudo .usuario {
+  font-size: 0.9em;
+  color: #555;
+}
+
+.card-conteudo .preco {
+  font-weight: bold;
+  color: #333;
+}
+
+.btn-ver-mais {
+  margin-top: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.btn-ver-mais:hover {
+  background-color: #0056b3;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-conteudo {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-conteudo img {
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .card-anuncio img {
+    height: 150px;
+  }
+}
