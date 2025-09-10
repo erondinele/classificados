@@ -1,0 +1,41 @@
+/* frontend/src/pages/CadastroUsuario.css */
+.cadastro-page {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+.cadastro-box {
+  width: 100%;
+  max-width: 520px;
+  background: #fff;
+  padding: 18px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+.cadastro-box h2 {
+  margin-top: 0;
+}
+.cadastro-box label {
+  display: block;
+  margin-top: 10px;
+  font-weight: 600;
+}
+.cadastro-box input,
+.cadastro-box select,
+.cadastro-box textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-top: 6px;
+}
+.cadastro-box button {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px;
+  background: #0b5394;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
