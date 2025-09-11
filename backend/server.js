@@ -1,29 +1,26 @@
-// Página: backend/server.js
+// backend/server.js
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");
 
-const anuncioRoutes = require("./routes/anuncioRoutes");
-
 const app = express();
-
-// Configurações
 app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Rotas
-app.use("/anuncios", anuncioRoutes);
+// Conectar ao MongoDB
+mongoose.connect("mongodb://127.0.0.1:27017/classificados", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
-// Conectar MongoDB
-mongoose
-  .connect("mongodb://127.0.0.1:27017/classificados", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("MongoDB conectado"))
-  .catch((err) => console.error("Erro ao conectar MongoDB:", err));
+// Rotas
+const anuncioRoutes = require("./routes/anuncioRoutes");
+const usuarioRoutes = require("./routes/usuarioRoutes");
+
+app.use("/anuncios", anuncioRoutes);
+app.use("/usuarios", usuarioRoutes);
 
 // Rodar servidor
 const PORT = 5000;

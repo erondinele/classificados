@@ -1,36 +1,52 @@
-// Arquivo: backend/routes/usuarioRoutes.js
+// backend/routes/usuarioRoutes.js
 const express = require("express");
 const router = express.Router();
 const Usuario = require("../models/Usuario");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+const multer = require("multer");
+const path = require("path");
 
-// Registrar usuário
-router.post("/register", async (req, res) => {
+// Configuração do multer para upload de fotos
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + path.extname(file.originalname);
+    cb(null, uniqueSuffix);
+  },
+});
+const upload = multer({ storage });
+
+// Criar usuário
+router.post("/", upload.single("foto"), async (req, res) => {
   try {
-    const { nome, email, senha } = req.body;
-    const usuario = new Usuario({ nome, email, senha });
+    const { nome, email, senha, celular, torre, apartamento } = req.body;
+    let foto = req.file ? req.file.filename : "avatar.png";
+
+    const usuario = new Usuario({
+      nome,
+      email,
+      senha,
+      celular,
+      torre,
+      apartamento,
+      foto,
+    });
     await usuario.save();
-    res.status(201).json({ message: "Usuário criado!" });
+    res.status(201).json(usuario);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
 
-// Login usuário
-router.post("/login", async (req, res) => {
-  const { email, senha } = req.body;
-  const usuario = await Usuario.findOne({ email });
-  if (!usuario)
-    return res.status(400).json({ error: "Usuário não encontrado" });
-
-  const senhaValida = await bcrypt.compare(senha, usuario.senha);
-  if (!senhaValida) return res.status(400).json({ error: "Senha inválida" });
-
-  const token = jwt.sign({ id: usuario._id }, "seu_segredo", {
-    expiresIn: "1d",
-  });
-  res.json({ token });
+// Listar usuários (opcional para testes)
+router.get("/", async (req, res) => {
+  try {
+    const usuarios = await Usuario.find();
+    res.json(usuarios);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 module.exports = router;

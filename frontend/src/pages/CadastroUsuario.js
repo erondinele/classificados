@@ -1,156 +1,120 @@
-// frontend/src/pages/CadastroUsuario.js
+// src/pages/CadastroUsuario.js
 import React, { useState } from "react";
+import api from "../api/api"; // já configurado
 import Header from "../components/Header";
-import api from "../services/api";
+import Modal from "../components/Modal";
 import "./CadastroUsuario.css";
+import { useNavigate } from "react-router-dom";
 
-const torres = [
-  "Andirá",
-  "Araucária",
-  "Caúna",
-  "Cedro",
-  "Figueira",
-  "Jacarandá",
-  "Jatobá",
-  "Jequitibá",
-  "Palmera",
-  "Pau Brasil",
-  "Peroba",
-].sort();
+function CadastroUsuario() {
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [celular, setCelular] = useState("");
+  const [torre, setTorre] = useState("");
+  const [apartamento, setApartamento] = useState("");
+  const [senha, setSenha] = useState("");
+  const [foto, setFoto] = useState(null);
 
-const CadastroUsuario = () => {
-  const [form, setForm] = useState({
-    nome: "",
-    email: "",
-    celular: "",
-    torre: "",
-    apartamento: "",
-    foto: null,
-  });
-
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (files) setForm({ ...form, [name]: files[0] });
-    else setForm({ ...form, [name]: value });
-  };
-
-  const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
-  const onlyDigits = (s) => s.replace(/\D/g, "");
+  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (
-      !form.nome ||
-      !form.email ||
-      !form.celular ||
-      !form.torre ||
-      !form.apartamento
-    ) {
-      alert("Preencha todos os campos obrigatórios.");
-      return;
-    }
-    if (!validateEmail(form.email)) {
-      alert("Email inválido");
-      return;
-    }
-    if (onlyDigits(form.celular).length < 10) {
-      alert("Celular inválido");
-      return;
-    }
 
-    const data = new FormData();
-    data.append("nome", form.nome);
-    data.append("email", form.email);
-    data.append("celular", onlyDigits(form.celular));
-    data.append("torre", form.torre);
-    data.append("apartamento", form.apartamento);
-    if (form.foto) data.append("foto", form.foto);
+    const formData = new FormData();
+    formData.append("nome", nome);
+    formData.append("email", email);
+    formData.append("celular", celular);
+    formData.append("torre", torre);
+    formData.append("apartamento", apartamento);
+    formData.append("senha", senha);
+    if (foto) formData.append("foto", foto);
 
     try {
-      await api.post("/usuarios", data, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      alert("Usuário cadastrado com sucesso!");
-      setForm({
-        nome: "",
-        email: "",
-        celular: "",
-        torre: "",
-        apartamento: "",
-        foto: null,
-      });
+      await api.post("/usuarios", formData);
+      setShowModal(true); // Exibe modal ao invés de mensagem na página
     } catch (err) {
       console.error(err);
-      alert("Erro ao cadastrar usuário.");
     }
   };
 
   return (
     <div>
-      <Header onSearch={() => {}} />
-      <main className="cadastro-page">
-        <div className="cadastro-box">
-          <h2>Cadastro de Usuário</h2>
-          <form onSubmit={handleSubmit}>
-            <label>Nome Completo *</label>
-            <input
-              name="nome"
-              value={form.nome}
-              onChange={handleChange}
-              required
-            />
-            <label>Email *</label>
-            <input
-              name="email"
-              type="email"
-              value={form.email}
-              onChange={handleChange}
-              required
-            />
-            <label>Celular *</label>
-            <input
-              name="celular"
-              value={form.celular}
-              onChange={handleChange}
-              placeholder="(11) 99999-9999"
-              required
-            />
-            <label>Torre *</label>
-            <select
-              name="torre"
-              value={form.torre}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Selecione</option>
-              {torres.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-            <label>Apartamento *</label>
-            <input
-              name="apartamento"
-              type="number"
-              max="999"
-              value={form.apartamento}
-              onChange={handleChange}
-              required
-            />
-            <label>Foto (opcional)</label>
-            <input
-              name="foto"
-              type="file"
-              accept="image/*"
-              onChange={handleChange}
-            />
-            <button type="submit">Cadastrar</button>
-          </form>
-        </div>
+      <Header />
+      <main className="cadastro-container">
+        <h2>Cadastro de Usuário</h2>
+        <form onSubmit={handleSubmit} className="login-form">
+          <input
+            type="text"
+            placeholder="Nome"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            required
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            type="text"
+            placeholder="Celular"
+            value={celular}
+            onChange={(e) => setCelular(e.target.value)}
+            required
+          />
+          <select
+            value={torre}
+            onChange={(e) => setTorre(e.target.value)}
+            required
+          >
+            <option value="">Selecione a Torre</option>
+            <option>Andirá</option>
+            <option>Araucária</option>
+            <option>Caúna</option>
+            <option>Cedro</option>
+            <option>Figueira</option>
+            <option>Jacarandá</option>
+            <option>Jatobá</option>
+            <option>Jequitibá</option>
+            <option>Palmeira</option>
+            <option>Pau Brasil</option>
+            <option>Peroba</option>
+          </select>
+          <input
+            type="number"
+            placeholder="Apartamento"
+            value={apartamento}
+            onChange={(e) => setApartamento(e.target.value)}
+            max="999"
+            required
+          />
+          <input
+            type="password"
+            placeholder="Senha"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            required
+          />
+          <input type="file" onChange={(e) => setFoto(e.target.files[0])} />
+          <button type="submit">Cadastrar</button>
+        </form>
+
+        <Modal
+          show={showModal}
+          onClose={() => {
+            setShowModal(false);
+            navigate("/login"); //Redireciona para a página de login
+          }}
+          title="Sucesso"
+        >
+          Cadastro realizado com sucesso!
+        </Modal>
       </main>
     </div>
   );
-};
+}
 
 export default CadastroUsuario;

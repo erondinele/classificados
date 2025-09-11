@@ -37,7 +37,8 @@ const Login = () => {
           <button type="submit">Entrar</button>
         </form>
         <div className="login-links">
-          <a href="/esqueci-senha">Esqueci minha senha</a>
+          <a href="/esqueci-senha">Esqueci minha senha</a> <br />
+          <br />
           <a href="/cadastrar-usuario">Não tem cadastro? Clique aqui</a>
         </div>
       </main>
