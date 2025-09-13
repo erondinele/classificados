@@ -1,47 +1,65 @@
-// Página: src/pages/Login.js
 import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import api from "../services/api";
 import Header from "../components/Header";
 import "./Login.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [mensagem, setMensagem] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert(`Login com email: ${email}`);
-    // Aqui você pode adicionar integração real com backend
+
+    try {
+      const response = await api.post("/usuarios/login", { email, senha });
+
+      // salva o token no localStorage
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("usuario", JSON.stringify(response.data.usuario));
+
+      setMensagem("Login realizado com sucesso!");
+      navigate("/"); // redireciona para home
+    } catch (error) {
+      setMensagem(error.response?.data?.message || "Erro ao fazer login");
+    }
   };
 
   return (
     <div>
       <Header />
-
-      <main className="login-container">
+      <div className="login-container">
         <h2>Login</h2>
         <form onSubmit={handleSubmit} className="login-form">
+          <label>Email:</label>
           <input
             type="email"
-            placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
+
+          <label>Senha:</label>
           <input
             type="password"
-            placeholder="Senha"
             value={senha}
             onChange={(e) => setSenha(e.target.value)}
             required
           />
+
           <button type="submit">Entrar</button>
         </form>
+
+        {mensagem && <p className="mensagem">{mensagem}</p>}
+
         <div className="login-links">
-          <a href="/esqueci-senha">Esqueci minha senha</a> <br />
+          <Link to="/cadastro-usuario">Não tem cadastro? Clique aqui</Link>
           <br />
-          <a href="/cadastrar-usuario">Não tem cadastro? Clique aqui</a>
+          <Link to="/esqueci-senha">Esqueci minha senha</Link>
         </div>
-      </main>
+      </div>
     </div>
   );
 };

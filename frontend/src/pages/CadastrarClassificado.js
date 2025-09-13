@@ -1,49 +1,62 @@
-// Página: src/pages/CadastrarClassificado.js
-import React, { useState } from "react";
-import Header from "../components/Header";
+// src/pages/CadastrarClassificado.js
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../api/api";
-import "./CadastrarClassificado.css";
+import Header from "../components/Header";
 
 const CadastrarClassificado = () => {
+  const navigate = useNavigate();
   const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
   const [preco, setPreco] = useState("");
-  const [imagens, setImagens] = useState([]);
+  const [arquivos, setArquivos] = useState([]);
 
+  // 🔹 Verificação de login (token)
+  /*useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      // Se não tiver token, redireciona para login
+      navigate("/login");
+    }
+  }, [navigate]);*/
+
+  // 🔹 Função de submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("titulo", titulo);
-    formData.append("descricao", descricao);
-    formData.append("preco", preco);
-    for (let i = 0; i < imagens.length; i++) {
-      formData.append("arquivos", imagens[i]);
-    }
 
     try {
+      const formData = new FormData();
+      formData.append("titulo", titulo);
+      formData.append("descricao", descricao);
+      formData.append("preco", preco);
+
+      for (let i = 0; i < arquivos.length; i++) {
+        formData.append("arquivos", arquivos[i]);
+      }
+
+      const token = localStorage.getItem("token");
+
       await api.post("/anuncios", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`, // envia token
         },
       });
+
       alert("Classificado cadastrado com sucesso!");
-      setTitulo("");
-      setDescricao("");
-      setPreco("");
-      setImagens([]);
-    } catch (err) {
-      console.error(err);
-      alert("Erro ao cadastrar classificado.");
+      navigate("/");
+    } catch (error) {
+      console.error("Erro ao cadastrar:", error);
+      alert("Erro ao cadastrar o classificado.");
     }
   };
 
   return (
     <div>
       <Header />
-
-      <main className="cadastrar-container">
+      <div className="form-container">
         <h2>Cadastrar Classificado</h2>
-        <form onSubmit={handleSubmit} className="cadastrar-form">
+        <form onSubmit={handleSubmit} className="form-container">
           <input
             type="text"
             placeholder="Título"
@@ -59,18 +72,19 @@ const CadastrarClassificado = () => {
           />
           <input
             type="number"
-            placeholder="Preço (opcional)"
+            placeholder="Preço"
             value={preco}
             onChange={(e) => setPreco(e.target.value)}
+            required
           />
           <input
             type="file"
             multiple
-            onChange={(e) => setImagens(e.target.files)}
+            onChange={(e) => setArquivos(e.target.files)}
           />
           <button type="submit">Cadastrar</button>
         </form>
-      </main>
+      </div>
     </div>
   );
 };
