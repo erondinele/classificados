@@ -1,29 +1,37 @@
+// src/pages/Login.js
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import api from "../services/api";
+import authService from "../services/authService"; // 1. Importamos nosso novo serviço
 import Header from "../components/Header";
 import "./Login.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [mensagem, setMensagem] = useState("");
+
+  // 2. Usando o mesmo padrão de estado do Cadastro
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
 
     try {
-      const response = await api.post("/usuarios/login", { email, senha });
+      // 3. Toda a lógica de API e localStorage agora está no serviço!
+      await authService.login(email, senha);
 
-      // salva o token no localStorage
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("usuario", JSON.stringify(response.data.usuario));
-
-      setMensagem("Login realizado com sucesso!");
-      navigate("/"); // redireciona para home
-    } catch (error) {
-      setMensagem(error.response?.data?.message || "Erro ao fazer login");
+      // Se o login for bem-sucedido, o serviço já salvou o token.
+      // Agora só precisamos redirecionar o usuário.
+      navigate("/"); // Redireciona para home
+    } catch (err) {
+      // 4. O serviço joga o erro, e nós o capturamos aqui para exibir na tela
+      setError(err.response?.data?.message || "Erro ao fazer login");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -49,10 +57,13 @@ const Login = () => {
             required
           />
 
-          <button type="submit">Entrar</button>
-        </form>
+          {/* 5. Exibimos o erro e desabilitamos o botão durante o loading */}
+          {error && <p className="error-message">{error}</p>}
 
-        {mensagem && <p className="mensagem">{mensagem}</p>}
+          <button type="submit" disabled={loading}>
+            {loading ? "Entrando..." : "Entrar"}
+          </button>
+        </form>
 
         <div className="login-links">
           <Link to="/cadastro-usuario">Não tem cadastro? Clique aqui</Link>

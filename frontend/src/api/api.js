@@ -1,34 +1,52 @@
-// Página: src/api/api.js
+// src/api/api.js
 import axios from "axios";
 
-// Cria instância do axios apontando para o backend
+// 1. Cria a instância do axios como você já tinha feito
 const api = axios.create({
-  baseURL: "http://localhost:5000", // URL do seu backend
+  baseURL: "http://localhost:5000",
 });
 
-// Função para buscar todos os anúncios
+// 2. O Interceptor! Isso vai rodar ANTES de CADA requisição
+api.interceptors.request.use(
+  (config) => {
+    // Pega o token do localStorage (onde vamos guardá-lo após o login)
+    const token = localStorage.getItem("authToken");
+
+    // Se o token existir, adiciona ao cabeçalho de autorização
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    // Retorna a configuração da requisição para que ela possa continuar
+    return config;
+  },
+  (error) => {
+    // Em caso de erro, rejeita a promessa
+    return Promise.reject(error);
+  }
+);
+
+// --- Daqui para baixo, podemos manter suas funções ou adicionar mais ---
+
+// Exemplo de uma função de login que podemos usar depois
+export const loginUsuario = async (credentials) => {
+  const response = await api.post("/usuarios/login", credentials);
+  return response.data;
+};
+
+// Suas funções existentes
 export const getAnuncios = async () => {
-  try {
-    const response = await api.get("/anuncios");
-    return response.data;
-  } catch (error) {
-    console.error("Erro ao buscar anúncios:", error);
-    throw error;
-  }
+  const response = await api.get("/anuncios");
+  return response.data;
 };
 
-// Função para criar um novo anúncio com imagens
 export const criarAnuncio = async (formData) => {
-  try {
-    const response = await api.post("/anuncios", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Erro ao criar anúncio:", error);
-    throw error;
-  }
+  // O header 'Content-Type': 'multipart/form-data' é adicionado automaticamente
+  // pelo axios ao usar FormData, então não precisamos mais especificá-lo aqui.
+  // E o interceptor já vai adicionar o token de autenticação!
+  const response = await api.post("/anuncios", formData);
+  return response.data;
 };
 
-// Exporta o axios puro caso precise de outras requisições
+// Exporta a instância configurada para uso em componentes, como você já fazia
 export default api;

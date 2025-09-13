@@ -1,6 +1,6 @@
 // src/pages/CadastroUsuario.js
 import React, { useState } from "react";
-import api from "../api/api"; // já configurado
+import api from "../api/api";
 import Header from "../components/Header";
 import Modal from "../components/Modal";
 import "./CadastroUsuario.css";
@@ -15,11 +15,18 @@ function CadastroUsuario() {
   const [senha, setSenha] = useState("");
   const [foto, setFoto] = useState(null);
 
+  // --- NOSSAS NOVAS VARIÁVEIS DE ESTADO ---
+  const [loading, setLoading] = useState(false); // Para controlar o estado de carregamento
+  const [error, setError] = useState(null); // Para armazenar mensagens de erro
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // --- LÓGICA DE LOADING E ERRO ---
+    setLoading(true); // Inicia o carregamento
+    setError(null); // Limpa erros anteriores
 
     const formData = new FormData();
     formData.append("nome", nome);
@@ -32,9 +39,17 @@ function CadastroUsuario() {
 
     try {
       await api.post("/usuarios", formData);
-      setShowModal(true); // Exibe modal ao invés de mensagem na página
+      setShowModal(true); // Sucesso -> mostra o modal
     } catch (err) {
-      console.error(err);
+      // Pega a mensagem de erro que nosso backend envia e a exibe
+      const errorMessage =
+        err.response?.data?.error ||
+        "Ocorreu um erro ao tentar cadastrar. Tente novamente.";
+      setError(errorMessage);
+      console.error(err.response?.data || err);
+    } finally {
+      // Executa sempre, seja em caso de sucesso ou erro
+      setLoading(false); // Finaliza o carregamento
     }
   };
 
@@ -44,6 +59,7 @@ function CadastroUsuario() {
       <main className="cadastro-container">
         <h2>Cadastro de Usuário</h2>
         <form onSubmit={handleSubmit} className="login-form">
+          {/* ... todos os seus inputs continuam os mesmos ... */}
           <input
             type="text"
             placeholder="Nome"
@@ -99,14 +115,21 @@ function CadastroUsuario() {
             required
           />
           <input type="file" onChange={(e) => setFoto(e.target.files[0])} />
-          <button type="submit">Cadastrar</button>
+
+          {/* --- EXIBIÇÃO DA MENSAGEM DE ERRO --- */}
+          {error && <p className="error-message">{error}</p>}
+
+          {/* --- BOTÃO COM FEEDBACK DE LOADING --- */}
+          <button type="submit" disabled={loading}>
+            {loading ? "Cadastrando..." : "Cadastrar"}
+          </button>
         </form>
 
         <Modal
           show={showModal}
           onClose={() => {
             setShowModal(false);
-            navigate("/login"); //Redireciona para a página de login
+            navigate("/login");
           }}
           title="Sucesso"
         >
