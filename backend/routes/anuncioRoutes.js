@@ -1,38 +1,28 @@
-// Página: backend/routes/anuncioRoutes.js
+// backend/routes/anuncioRoutes.js
 const express = require("express");
 const router = express.Router();
-const Anuncio = require("../models/Anuncio");
-const multer = require("multer");
 
-// Configuração do multer para upload
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/");
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + "-" + file.originalname);
-  },
-});
+// 1. Importando nossas ferramentas centralizadas
+const upload = require("../config/multerConfig");
+const authMiddleware = require("../middlewares/authMiddleware");
+const anuncioController = require("../controllers/anuncioController");
 
-const upload = multer({ storage });
+// --- ROTAS ---
 
-// Criar anúncio com upload de imagens
-router.post("/", upload.array("arquivos"), async (req, res) => {
-  try {
-    const imagens = req.files.map((file) => file.filename);
-    const anuncio = new Anuncio({ ...req.body, imagens });
-    await anuncio.save();
-    res.status(201).json(anuncio);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
+// Rota para Listar todos os anúncios (Pública)
+router.get("/", anuncioController.getAllAnuncios);
 
-// Listar anúncios
-router.get("/", async (req, res) => {
-  const anuncios = await Anuncio.find().populate("usuario", "nome email");
-  res.json(anuncios);
-});
+// Rota para Criar um novo anúncio (Protegida)
+// 1º - Roda o authMiddleware para verificar o token e identificar o usuário
+// 2º - Roda o multer para fazer o upload dos arquivos
+// 3º - Roda a função do controller para salvar os dados
+router.post(
+  "/",
+  authMiddleware,
+  upload.array("arquivos", 5), // Adicionei um limite de 5 fotos por anúncio
+  anuncioController.createAnuncio
+);
+
+// Futuramente, adicionaremos mais rotas aqui (GET /:id, DELETE /:id, etc)
 
 module.exports = router;
